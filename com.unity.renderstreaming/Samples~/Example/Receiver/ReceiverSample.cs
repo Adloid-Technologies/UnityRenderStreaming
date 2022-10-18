@@ -29,7 +29,7 @@ namespace Unity.RenderStreaming.Samples
     class ReceiverSample : MonoBehaviour
     {
 #pragma warning disable 0649
-        [SerializeField] private RenderStreaming renderStreaming;
+        [SerializeField] private RenderStreamingHandler renderStreamingHandler;
         [SerializeField] private Button startButton;
         [SerializeField] private Button stopButton;
         [SerializeField] private InputField connectionIdInput;
@@ -68,9 +68,9 @@ namespace Unity.RenderStreaming.Samples
 
         void Start()
         {
-            if (renderStreaming.runOnAwake)
+            if (renderStreamingHandler.runOnAwake)
                 return;
-            renderStreaming.Run(signaling: settings?.Signaling);
+            renderStreamingHandler.Run(signaling: settings?.Signaling);
         }
 
         private void Update()

@@ -31,7 +31,7 @@ namespace Unity.RenderStreaming.Samples
 
     class BroadcastSample : MonoBehaviour
     {
-        [SerializeField] private RenderStreaming renderStreaming;
+        [SerializeField] private RenderStreamingHandler renderStreamingHandler;
         [SerializeField] private InputReceiver inputReceiver;
         [SerializeField] private SimpleCameraControllerV2 cameraController;
         [SerializeField] private UIControllerV2 uiController;
@@ -165,9 +165,9 @@ namespace Unity.RenderStreaming.Samples
         {
             SyncDisplayVideoSenderParameters();
 
-            if (renderStreaming.runOnAwake)
+            if (renderStreamingHandler.runOnAwake)
                 return;
-            renderStreaming.Run(signaling: settings?.Signaling);
+            renderStreamingHandler.Run(signaling: settings?.Signaling);
 
             inputReceiver.OnStartedChannel += OnStartedChannel;
             var map = inputReceiver.currentActionMap;
