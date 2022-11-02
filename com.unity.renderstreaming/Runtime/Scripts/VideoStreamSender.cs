@@ -86,24 +86,24 @@ namespace Unity.RenderStreaming
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum VideoStreamSource
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Camera = 0,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Screen = 1,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         WebCamera = 2,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Texture = 3
     }
@@ -167,11 +167,12 @@ namespace Unity.RenderStreaming
             get { return m_Source; }
             set
             {
+                var changed = m_Source != value;
                 m_Source = value;
-                if (m_Texture != null)
+                if (isPlaying && changed)
                 {
-                    m_TextureSize.x = m_Texture.width;
-                    m_TextureSize.y = m_Texture.height;
+                    var op = CreateTrack();
+                    StartCoroutine(op, _ => ReplaceTrack(_.Track));
                 }
             }
         }
@@ -184,9 +185,11 @@ namespace Unity.RenderStreaming
             get { return m_Camera; }
             set
             {
-                if (isPlaying)
-                    throw new InvalidOperationException("Can not change this parameter after the streaming is started.");
                 m_Camera = value;
+                if (isPlaying)
+                {
+                    source = VideoStreamSource.Camera;
+                }
             }
         }
 
@@ -198,11 +201,11 @@ namespace Unity.RenderStreaming
             get { return m_Texture; }
             set
             {
-                if (isPlaying)
-                    throw new InvalidOperationException("Can not change this parameter after the streaming is started.");
                 m_Texture = value;
-                m_TextureSize.x = m_Texture.width;
-                m_TextureSize.y = m_Texture.height;
+                if (isPlaying)
+                {
+                    source = VideoStreamSource.Texture;
+                }
             }
         }
 
@@ -214,9 +217,11 @@ namespace Unity.RenderStreaming
             get { return m_WebCamDeviceIndex; }
             set
             {
-                if (isPlaying)
-                    throw new InvalidOperationException("Can not change this parameter after the streaming is started.");
                 m_WebCamDeviceIndex = value;
+                if (isPlaying)
+                {
+                    source = VideoStreamSource.WebCamera;
+                }
             }
         }
 
