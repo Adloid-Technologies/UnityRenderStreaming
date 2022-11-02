@@ -22,9 +22,6 @@ namespace Unity.RenderStreaming
 
             audioStreamSender = gameObject.AddComponent<AudioStreamSender>();
             audioStreamSender.source = AudioStreamSource.APIOnly;
-            var audioListener = FindObjectOfType<AudioListener>();
-            var autoFilter = audioListener.gameObject.AddComponent<AutoAudioFilter>();
-            autoFilter.SetSender(audioStreamSender);
 
             broadcast = gameObject.AddComponent<Broadcast>();
             broadcast.AddComponent(videoStreamSender);
@@ -37,8 +34,9 @@ namespace Unity.RenderStreaming
 
             SceneManager.activeSceneChanged += (scene1, scene2) =>
             {
+                Debug.Log($"scene changed {scene1.name} to {scene2.name}");
                 var audioListener = FindObjectOfType<AudioListener>();
-                if (audioListener.gameObject.GetComponent<AutoAudioFilter>() != null)
+                if (audioListener == null || audioListener.gameObject.GetComponent<AutoAudioFilter>() != null)
                 {
                     return;
                 }
