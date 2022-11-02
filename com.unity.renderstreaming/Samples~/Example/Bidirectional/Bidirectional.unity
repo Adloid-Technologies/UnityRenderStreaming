@@ -351,8 +351,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 375413529}
   m_HandleRect: {fileID: 375413528}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3299,7 +3299,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
@@ -4597,7 +4596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ae98fcc4fa36bd48877f86930b988de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderStreaming: {fileID: 1915034402}
+  renderStreamingHandler: {fileID: 1915034402}
   webcamSelectDropdown: {fileID: 1859585770}
   microphoneSelectDropdown: {fileID: 2125586392}
   startButton: {fileID: 1013695940}
@@ -4636,6 +4635,12 @@ MonoBehaviour:
   handlers:
   - {fileID: 1915034406}
   runOnAwake: 0
+  settings:
+    runOnAwake: 0
+    urlSignaling: http://localhost
+    signalingType: 0
+    iceServers: []
+    interval: 5
 --- !u!224 &1915034403
 RectTransform:
   m_ObjectHideFlags: 0

@@ -3791,7 +3791,7 @@ MonoBehaviour:
   toggleGroupRole: {fileID: 1042564463}
   inputFieldUsername: {fileID: 63591094}
   buttonStart: {fileID: 210182347}
-  renderStreaming: {fileID: 2000677260}
+  renderStreamingHandler: {fileID: 2000677260}
   prefabHost: {fileID: 1593075550384854350, guid: a8d0903a5d0887a4c995401ef7832d6b,
     type: 3}
   prefabGuest: {fileID: 489449647258272010, guid: f99735f643c2ee344bba4094234fd984,
@@ -3825,6 +3825,12 @@ MonoBehaviour:
   interval: 5
   handlers: []
   runOnAwake: 0
+  settings:
+    runOnAwake: 0
+    urlSignaling: http://localhost
+    signalingType: 0
+    iceServers: []
+    interval: 5
 --- !u!4 &2000677261
 Transform:
   m_ObjectHideFlags: 0
