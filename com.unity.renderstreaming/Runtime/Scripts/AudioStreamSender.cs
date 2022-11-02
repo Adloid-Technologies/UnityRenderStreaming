@@ -170,6 +170,80 @@ namespace Unity.RenderStreaming
             }
         }
 
+#if UNITY_2020_1_OR_NEWER
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="nativeArray"></param>
+        /// <param name="channels"></param>
+        /// <param name="sampleRate"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void SetData(ref NativeArray<float>.ReadOnly nativeArray, int channels, int sampleRate)
+        {
+            if (m_sourceImpl == null)
+            {
+                return;
+            }
+
+            if (m_sourceImpl is AudioStreamSourceAPI sourceImpl)
+            {
+                sourceImpl.SetData(ref nativeArray, channels, sampleRate);
+            }
+            else
+            {
+                throw new InvalidOperationException($"current source type is not {nameof(AudioStreamSource.APIOnly)}.");
+            }
+        }
+#endif
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="nativeArray"></param>
+        /// <param name="channels"></param>
+        /// <param name="sampleRate"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void SetData(ref NativeArray<float> nativeArray, int channels, int sampleRate)
+        {
+            if (m_sourceImpl == null)
+            {
+                return;
+            }
+
+            if (m_sourceImpl is AudioStreamSourceAPI sourceImpl)
+            {
+                sourceImpl.SetData(ref nativeArray, channels, sampleRate);
+            }
+            else
+            {
+                throw new InvalidOperationException($"current source type is not {nameof(AudioStreamSource.APIOnly)}.");
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="nativeSlice"></param>
+        /// <param name="channels"></param>
+        /// <param name="sampleRate"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void SetData(ref NativeSlice<float> nativeSlice, int channels, int sampleRate)
+        {
+            if (m_sourceImpl == null)
+            {
+                return;
+            }
+
+            if (m_sourceImpl is AudioStreamSourceAPI sourceImpl)
+            {
+                sourceImpl.SetData(ref nativeSlice, channels, sampleRate);
+            }
+            else
+            {
+                throw new InvalidOperationException($"current source type is not {nameof(AudioStreamSource.APIOnly)}.");
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -504,6 +578,38 @@ namespace Unity.RenderStreaming
                 }
 
                 m_audioTrack.SetData(array, channels, sampleRate);
+            }
+
+#if UNITY_2020_1_OR_NEWER
+            public void SetData(ref NativeArray<float>.ReadOnly nativeArray, int channels, int sampleRate)
+            {
+                if (m_audioTrack == null || m_audioTrack.ReadyState != TrackState.Live)
+                {
+                    return;
+                }
+
+                m_audioTrack.SetData(ref nativeArray, channels, sampleRate);
+            }
+#endif
+
+            public void SetData(ref NativeArray<float> nativeArray, int channels, int sampleRate)
+            {
+                if (m_audioTrack == null || m_audioTrack.ReadyState != TrackState.Live)
+                {
+                    return;
+                }
+
+                m_audioTrack.SetData(ref nativeArray, channels, sampleRate);
+            }
+
+            public void SetData(ref NativeSlice<float> nativeSlice, int channels, int sampleRate)
+            {
+                if (m_audioTrack == null || m_audioTrack.ReadyState != TrackState.Live)
+                {
+                    return;
+                }
+
+                m_audioTrack.SetData(ref nativeSlice, channels, sampleRate);
             }
 
             public override void Dispose()
