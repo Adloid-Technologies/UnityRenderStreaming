@@ -78,6 +78,12 @@ namespace Unity.RenderStreaming
             get { return m_Source; }
             set
             {
+                var changed = m_Source != value;
+                if (isPlaying && changed)
+                {
+                    var op = CreateTrack();
+                    StartCoroutine(op, _ => ReplaceTrack(_.Track));
+                }
                 m_Source = value;
             }
         }
@@ -114,8 +120,6 @@ namespace Unity.RenderStreaming
             get { return m_MicrophoneDeviceIndex; }
             set
             {
-                if (isPlaying)
-                    throw new InvalidOperationException("Can not change this parameter after the streaming is started.");
                 m_MicrophoneDeviceIndex = value;
             }
         }
@@ -128,8 +132,6 @@ namespace Unity.RenderStreaming
             get { return m_AudioSource; }
             set
             {
-                if (isPlaying)
-                    throw new InvalidOperationException("Can not change this parameter after the streaming is started.");
                 m_AudioSource = value;
             }
         }

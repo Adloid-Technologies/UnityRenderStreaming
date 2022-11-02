@@ -186,10 +186,6 @@ namespace Unity.RenderStreaming
             set
             {
                 m_Camera = value;
-                if (isPlaying)
-                {
-                    source = VideoStreamSource.Camera;
-                }
             }
         }
 
@@ -202,10 +198,6 @@ namespace Unity.RenderStreaming
             set
             {
                 m_Texture = value;
-                if (isPlaying)
-                {
-                    source = VideoStreamSource.Texture;
-                }
             }
         }
 
@@ -218,10 +210,6 @@ namespace Unity.RenderStreaming
             set
             {
                 m_WebCamDeviceIndex = value;
-                if (isPlaying)
-                {
-                    source = VideoStreamSource.WebCamera;
-                }
             }
         }
 
@@ -442,21 +430,6 @@ namespace Unity.RenderStreaming
             m_sourceImpl?.Dispose();
             m_sourceImpl = CreateVideoStreamSource();
             return m_sourceImpl.CreateTrack();
-        }
-
-        void StartCoroutine<T>(T coroutine, Action<T> callback) where T : IEnumerator
-        {
-            if (coroutine == null)
-                throw new ArgumentNullException("coroutine");
-            if (callback == null)
-                throw new ArgumentNullException("callback");
-            StartCoroutine(_Coroutine(coroutine, callback));
-        }
-
-        IEnumerator _Coroutine<T>(T coroutine, Action<T> callback) where T : IEnumerator
-        {
-            yield return StartCoroutine(coroutine);
-            callback(coroutine);
         }
 
 
