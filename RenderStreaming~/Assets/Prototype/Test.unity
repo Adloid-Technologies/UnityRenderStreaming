@@ -133,7 +133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 65924012}
   - component: {fileID: 65924011}
-  - component: {fileID: 65924010}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -141,14 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &65924010
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 65924009}
-  m_Enabled: 1
 --- !u!20 &65924011
 Camera:
   m_ObjectHideFlags: 0
@@ -512,6 +503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1040635542}
   - component: {fileID: 1040635543}
+  - component: {fileID: 1040635544}
   m_Layer: 0
   m_Name: RenderStreamingTest
   m_TagString: Untagged
@@ -547,6 +539,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   remoteVideoImage: {fileID: 804065222}
+--- !u!81 &1040635544
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040635541}
+  m_Enabled: 1
 --- !u!1 &1049920866
 GameObject:
   m_ObjectHideFlags: 0
