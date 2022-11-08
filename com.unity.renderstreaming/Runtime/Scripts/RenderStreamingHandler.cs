@@ -49,6 +49,21 @@ namespace Unity.RenderStreaming
         public bool Running => m_running;
         public IReadOnlyList<SignalingHandlerBase> HandlerBases => handlers;
 
+        public T GetSignalingSettings<T>() where T : SignalingSettings
+        {
+            return settings as T;
+        }
+
+        public void SetSignalingSettings(SignalingSettings settings)
+        {
+            if (m_running)
+            {
+                throw new InvalidOperationException("The Signaling process has already started.");
+            }
+
+            this.settings = settings;
+        }
+
 
 #if UNITY_EDITOR
         [InitializeOnLoadMethod]

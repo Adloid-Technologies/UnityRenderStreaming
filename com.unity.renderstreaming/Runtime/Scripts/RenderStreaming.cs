@@ -22,20 +22,17 @@ namespace Unity.RenderStreaming
             return false;
         }
 
-        public static SignalingSettings SignalingSettings
+        public static T GetSignalingSettings<T>() where T : SignalingSettings
         {
-            get
+            var setting = new WebSocketSignalingSettings();
+            setting.signalingType = SignalingType.WebSocket;
+            setting.urlSignaling = "ws://localhost:3000";
+            setting.iceServers = new RTCIceServer[]
             {
-                var setting = new SignalingSettings();
-                setting.signalingType = SignalingType.WebSocket;
-                setting.urlSignaling = "ws://localhost:3000";
-                setting.iceServers = new RTCIceServer[]
-                {
-                    new RTCIceServer() {urls = new string[] {"stun:stun.l.google.com:19302"}}
-                };
-                setting.interval = 5;
-                return setting;
-            }
+                new RTCIceServer() {urls = new string[] {"stun:stun.l.google.com:19302"}}
+            };
+            setting.interval = 5;
+            return setting as T;
         }
 
         static RenderStreaming()

@@ -1,5 +1,4 @@
-using System;
-using Unity.WebRTC;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,7 +28,7 @@ namespace Unity.RenderStreaming
 
             renderstreaming = gameObject.AddComponent<RenderStreamingHandler>();
             renderstreaming.AddSignalingHandler(broadcast);
-            renderstreaming.settings = RenderStreaming.SignalingSettings;
+            renderstreaming.settings = RenderStreaming.GetSignalingSettings<WebSocketSignalingSettings>();
             renderstreaming.Run();
 
             SceneManager.activeSceneChanged += (scene1, scene2) =>

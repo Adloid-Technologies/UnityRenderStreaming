@@ -97,6 +97,15 @@ namespace Unity.RenderStreaming
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        public bool autoRequestUserAuthorization
+        {
+            get => m_AutoRequestUserAuthorization;
+            set { m_AutoRequestUserAuthorization = value; }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         public uint minBitrate

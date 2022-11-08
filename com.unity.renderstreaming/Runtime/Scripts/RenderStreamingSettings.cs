@@ -28,6 +28,18 @@ namespace Unity.RenderStreaming
         public float interval = 5.0f;
     }
 
+    public class HttpSignalingSettings : SignalingSettings
+    {
+    }
+
+    public class WebSocketSignalingSettings : SignalingSettings
+    {
+    }
+
+    public class FurioosSignalingSettings : SignalingSettings
+    {
+    }
+
     [Serializable]
     public class CodecSettings
     {
