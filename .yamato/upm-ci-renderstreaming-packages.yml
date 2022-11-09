@@ -139,7 +139,7 @@ test_{{ package.name }}_{{ param.platform }}_{{ param.backend }}_{{ platform.nam
     - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - npm install upm-ci-utils@{{ upm.package_version }} -g --registry {{ upm.registry_url }}
-{% if platform.name == "win" %}
+{% if platform.packed_webapp_platform == "win" %}
     - |
       set WEBAPP_PATH=%cd%\Webapp\bin~\{{ platform.packed_webapp_name }}
       upm-ci package test -u {{ editor.version }} --package-path {{ package.packagename }} --platform {{ param.platform }} --backend {{ param.backend }} --extra-utr-arg="--timeout=3000"
@@ -170,11 +170,11 @@ test_{{ project.name }}_{{ param.platform }}_{{ param.backend }}_{{ platform.nam
     - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - npm install upm-ci-utils@{{ upm.package_version }} -g --registry {{ upm.registry_url }}
-{% if platform.name != "win" %}
+{% if platform.packed_webapp_platform != "win" %}
     - find ./{{ package.packagename }} -type l -exec bash -c 'sh BuildScripts~/convert_symlinks.sh "$0"' {} \;
 {% endif %}
     - upm-ci project pack --project-path {{ project.path }}
-{% if platform.name == "win" %}
+{% if platform.packed_webapp_platform == "win" %}
     - |
       set WEBAPP_PATH=%cd%\Webapp\bin~\{{ platform.packed_webapp_name }}
       upm-ci project test -u {{ editor.version }} --project-path {{ project.path }} --platform {{ param.platform }} --backend {{ param.backend }} --extra-utr-arg="--timeout=3000"
@@ -427,7 +427,7 @@ codecoverage_{{ package.packagename }}_{{ platform.name }}_{{ editor.version }}:
     - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - npm install upm-ci-utils@{{ upm.package_version }} -g --registry {{ upm.registry_url }}
-{% if platform.name == "win" %}
+{% if platform.packed_webapp_platform == "win" %}
     - |
       set WEBAPP_PATH=%cd%\Webapp\bin~\{{ platform.packed_webapp_name }}
       upm-ci package test -u {{ editor.version }} --package-path {{ package.packagename }} --enable-code-coverage --code-coverage-options "generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:-UnityEngine.*,+Unity.RenderStreaming" --extra-utr-arg="--timeout=3000"
