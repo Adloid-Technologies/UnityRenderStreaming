@@ -11,25 +11,47 @@ namespace Unity.RenderStreaming
         public CodecSettings codecSettings;
     }
 
-    public enum SignalingType
-    {
-        WebSocket,
-        Http,
-        Furioos
-    }
-
-    [Serializable]
-    public class SignalingSettings
+    public abstract class SignalingSettings
     {
         public bool runOnAwake;
         public string urlSignaling = "http://localhost";
-        public SignalingType signalingType = SignalingType.WebSocket;
-        public RTCIceServer[] iceServers;
-        public float interval = 5.0f;
+        public ICEServer[] iceServers;
+    }
+
+    [Serializable]
+    public class ICEServer
+    {
+        public string credential;
+        public RTCIceCredentialType credentialType;
+        public string[] urls;
+        public string username;
+
+        public static implicit operator RTCIceServer(ICEServer source)
+        {
+            return new RTCIceServer
+            {
+                credential = source.credential,
+                credentialType = source.credentialType,
+                urls = source.urls,
+                username = source.username
+            };
+        }
+
+        public static implicit operator ICEServer(RTCIceServer source)
+        {
+            return new ICEServer
+            {
+                credential = source.credential,
+                credentialType = source.credentialType,
+                urls = source.urls,
+                username = source.username
+            };
+        }
     }
 
     public class HttpSignalingSettings : SignalingSettings
     {
+        public float interval = 5.0f;
     }
 
     public class WebSocketSignalingSettings : SignalingSettings
@@ -41,7 +63,7 @@ namespace Unity.RenderStreaming
     }
 
     [Serializable]
-    public class CodecSettings
+    public class CodecSettings : ScriptableObject
     {
     }
 }

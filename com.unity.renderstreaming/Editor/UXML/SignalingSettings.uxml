@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements"
+         xmlns:urs="Unity.RenderStreaming.Editor.UI"
+         xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
+         noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="signalingSettingContainer">
+        <ui:VisualElement name="signalingTypeContainer"/>
+        <ui:TextField label="Signaling Url" name="signalingUrlField" />
+        <ui:VisualElement name="iceServerListContainer">
+            <uie:IntegerField label="Ice Servers" name="iceServerCountField"/>
+            <ui:VisualElement name="iceServerList" />
+        </ui:VisualElement>
+        <ui:VisualElement name="extensionSettingContainer" />
+    </ui:VisualElement>
+</ui:UXML>

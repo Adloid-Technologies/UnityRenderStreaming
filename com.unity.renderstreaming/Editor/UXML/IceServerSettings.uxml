@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements"
+         xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
+         noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="iceServerContainer">
+        <ui:Foldout name="title" text="Ice server [i]">
+            <ui:Foldout text="urls">
+                <ui:ListView name="urlList"/>
+                <ui:VisualElement name="buttons" class="bottom-buttons">
+                    <ui:Button name="addButton" text="+"/>
+                    <ui:Button name="removeButton" text="-"/>
+                </ui:VisualElement>
+            </ui:Foldout>
+            <ui:TextField label="username"/>
+            <ui:TextField label="credential"/>
+            <uie:EnumField label="credential type" name="credentialTypeField" include-obsolete-values="false"
+                           type="Unity.WebRTC.RTCIceCredentialType, Unity.WebRTC"/>
+        </ui:Foldout>
+    </ui:VisualElement>
+</ui:UXML>
