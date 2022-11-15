@@ -151,25 +151,11 @@ namespace Unity.RenderStreaming
             return (ISignaling)Activator.CreateInstance(_type, args);
         }
 
-        static ISignaling CreateSignaling(SignalingSettings settings, SynchronizationContext context)
-        {
-            switch (settings.signalingType)
-            {
-                case SignalingType.WebSocket:
-                    return new WebSocketSignaling(settings.urlSignaling, settings.interval, context);
-                case SignalingType.Http:
-                    return new HttpSignaling(settings.urlSignaling, settings.interval, context);
-                case SignalingType.Furioos:
-                    return new FurioosSignaling(settings.urlSignaling, settings.interval, context);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(settings.signalingType), settings.signalingType, null);
-            }
-        }
-
         public void Run()
         {
-            var signaling = CreateSignaling(settings, SynchronizationContext.Current);
-            var conf = new RTCConfiguration {iceServers = settings.iceServers};
+            var type = settings.GetType();
+            var signaling = CreateSignaling(type.ToString(), settings.urlSignaling, 5.0f, SynchronizationContext.Current);
+            var conf = new RTCConfiguration {iceServers = settings.iceServers.Select(x => (RTCIceServer)x).ToArray()};
             _Run(conf, signaling, handlers.ToArray());
         }
 

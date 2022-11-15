@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using Unity.RenderStreaming.Signaling;
 using UnityEditor;
 using UnityEditor.UIElements;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Unity.RenderStreaming.Editor.UI
@@ -27,19 +23,10 @@ namespace Unity.RenderStreaming.Editor.UI
         internal ObservableCollection<ICEServer> draft;
         internal VisualElementCache cache;
 
-        private VisualElement signalingTypeContainer => cache.Get<VisualElement>("signalingTypeContainer");
         private TextField signalingUrlField => cache.Get<TextField>("signalingUrlField");
         private IntegerField iceServerCountField => cache.Get<IntegerField>("iceServerCountField");
         private VisualElement iceServerList => cache.Get<VisualElement>("iceServerList");
         private VisualElement extensionSettingContainer => cache.Get<VisualElement>("extensionSettingContainer");
-
-        private static readonly IReadOnlyList<Type> relevantSignalingSettingTypes =
-            TypeCache.GetTypesDerivedFrom<Unity.RenderStreaming.SignalingSettings>().Where(t => t.IsVisible && t.IsClass).ToList();
-        private static readonly List<string> types = relevantSignalingSettingTypes.Select(x => x.Name).ToList();
-        private static FieldInfo[] baseSignalingSettingFieldInfo =
-            typeof(Unity.RenderStreaming.SignalingSettings).GetFields();
-        private static Dictionary<string, FieldInfo[]> signalingSettingFieldInfosMap =
-            relevantSignalingSettingTypes.ToDictionary(x => x.Name, x => x.GetFields());
 
         public SignalingSettings()
         {
@@ -54,34 +41,15 @@ namespace Unity.RenderStreaming.Editor.UI
             cache = new VisualElementCache(newVisualElement);
             draft = new ObservableCollection<ICEServer>();
 
-            var popupField = new PopupField<string>("Signaling Type", types, 0);
-            popupField.formatListItemCallback = s => s.Replace("Settings", "").Split('.').LastOrDefault();
-            popupField.formatSelectedValueCallback = s => s.Replace("Settings", "").Split('.').LastOrDefault();
-            signalingTypeContainer.Add(popupField);
-
-            popupField.RegisterCallback<ChangeEvent<string>>(ChangeSignalingType);
-            popupField.index = 1;
-
             iceServerCountField.RegisterCallback<ChangeEvent<int>>(ChangeSize);
         }
 
-        private void ChangeSignalingType(ChangeEvent<string> evt)
+        public void ChangeSignalingType(IEnumerable<string> newFieldNames)
         {
-            if (evt.previousValue == evt.newValue)
-            {
-                return;
-            }
-
-            if (!signalingSettingFieldInfosMap.TryGetValue(evt.newValue, out var newTypeFields))
-            {
-                throw new InvalidOperationException();
-            }
-
             extensionSettingContainer.Clear();
-            foreach (var field in newTypeFields.Where(x =>
-                         !baseSignalingSettingFieldInfo.Select(y => y.Name).Contains(x.Name)))
+            foreach (var fieldName in newFieldNames)
             {
-                extensionSettingContainer.Add(new TextField(field.Name));
+                extensionSettingContainer.Add(new TextField(fieldName));
             }
         }
 

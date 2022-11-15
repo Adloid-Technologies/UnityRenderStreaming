@@ -4,11 +4,12 @@ using UnityEngine;
 
 namespace Unity.RenderStreaming
 {
+    [CreateAssetMenu]
     public class RenderStreamingSettings : ScriptableObject
     {
-        public bool automaticStreaming;
-        public SignalingSettings signalingSettings;
-        public CodecSettings codecSettings;
+        [SerializeField] public bool automaticStreaming;
+        [SerializeReference] public SignalingSettings signalingSettings = new WebSocketSignalingSettings();
+        [SerializeReference] public CodecSettings codecSettings = new CodecSettings();
     }
 
     public abstract class SignalingSettings
@@ -49,21 +50,24 @@ namespace Unity.RenderStreaming
         }
     }
 
+    [Serializable]
     public class HttpSignalingSettings : SignalingSettings
     {
         public float interval = 5.0f;
     }
 
+    [Serializable]
     public class WebSocketSignalingSettings : SignalingSettings
     {
     }
 
+    [Serializable]
     public class FurioosSignalingSettings : SignalingSettings
     {
     }
 
     [Serializable]
-    public class CodecSettings : ScriptableObject
+    public class CodecSettings
     {
     }
 }

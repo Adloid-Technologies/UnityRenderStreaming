@@ -6,6 +6,7 @@
         <ui:Label text="Render Streaming" name="titleLabel"/>
         <uie:ObjectField label="RenderStreaming Settings" name="renderStreamingSettingsField"  type="Unity.RenderStreaming.RenderStreamingSettings, Unity.RenderStreaming" />
         <ui:Toggle label="Automatic Streaming"/>
+        <ui:VisualElement name="signalingTypeContainer"/>
         <ui:Foldout text="Signaling Settings">
             <urs:SignalingSettings name="signalingSettings"/>
         </ui:Foldout>
