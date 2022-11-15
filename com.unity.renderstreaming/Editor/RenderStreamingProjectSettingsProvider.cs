@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Unity.RenderStreaming.Editor;
+using Unity.RenderStreaming.Editor.UI;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace Unity.RenderStreaming
@@ -20,15 +17,6 @@ namespace Unity.RenderStreaming
         private VisualElementCache cache;
         private VisualElement signalingTypeContainer => cache.Get<VisualElement>("signalingTypeContainer");
         private Editor.UI.SignalingSettings signalingSettings => cache.Get<Editor.UI.SignalingSettings>("signalingSettings");
-
-        private static readonly IReadOnlyList<Type> relevantSignalingSettingTypes =
-            TypeCache.GetTypesDerivedFrom<Unity.RenderStreaming.SignalingSettings>().Where(t => t.IsVisible && t.IsClass).ToList();
-        private static readonly List<string> types = relevantSignalingSettingTypes.Select(x => x.Name).ToList();
-        private static FieldInfo[] baseSignalingSettingFieldInfo =
-            typeof(Unity.RenderStreaming.SignalingSettings).GetFields();
-        private static Dictionary<string, FieldInfo[]> signalingSettingFieldInfosMap =
-            relevantSignalingSettingTypes.ToDictionary(x => x.Name, x => x.GetFields());
-
 
         [SettingsProvider]
         public static SettingsProvider CreateProvider()
@@ -60,35 +48,14 @@ namespace Unity.RenderStreaming
 
             cache = new VisualElementCache(newVisualElement);
 
-            var popupField = new PopupField<string>("Signaling Type", types, 0);
-            popupField.formatListItemCallback = s => s.Replace("Settings", "").Split('.').LastOrDefault();
-            popupField.formatSelectedValueCallback = s => s.Replace("Settings", "").Split('.').LastOrDefault();
+            var popupField = new SignalingTypePopup("Signaling Type", 0);
+            popupField.ChangeEvent += newType => signalingSettings.ChangeSignalingType(newType);
             signalingTypeContainer.Add(popupField);
-
-            popupField.RegisterCallback<ChangeEvent<string>>(ChangeSignalingType);
-            popupField.index = 1;
         }
 
         public RenderStreamingProjectSettingsProvider(string path, SettingsScope scopes, IEnumerable<string> keywords = null)
             : base(path, scopes, keywords)
         {
-        }
-
-        private void ChangeSignalingType(ChangeEvent<string> evt)
-        {
-            if (evt.previousValue == evt.newValue)
-            {
-                return;
-            }
-
-            if (!signalingSettingFieldInfosMap.TryGetValue(evt.newValue, out var newTypeFields))
-            {
-                throw new InvalidOperationException();
-            }
-
-            var newFieldNames = newTypeFields.Where(x =>
-                !baseSignalingSettingFieldInfo.Select(y => y.Name).Contains(x.Name)).Select(x => x.Name);
-            signalingSettings.ChangeSignalingType(newFieldNames);
         }
     }
 }

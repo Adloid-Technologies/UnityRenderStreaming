@@ -2,11 +2,12 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace Unity.RenderStreaming.Editor.UI
 {
-    [CustomEditor(typeof(RenderStreamingHandler))]
-    internal class RenderStreamingHandlerEditor : UnityEditor.Editor
+   [CustomEditor(typeof(RenderStreamingSettings))]
+    internal class RenderStreamingSettingsEditor : UnityEditor.Editor
     {
         public override VisualElement CreateInspectorGUI()
         {
@@ -24,7 +25,6 @@ namespace Unity.RenderStreaming.Editor.UI
                     SerializedProperty prop = serializedObject.FindProperty("m_Script");
                     EditorGUILayout.PropertyField(prop, true, Array.Empty<GUILayoutOption>());
                 }
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("handlers"));
                 serializedObject.ApplyModifiedProperties();
             }));
 
@@ -32,7 +32,8 @@ namespace Unity.RenderStreaming.Editor.UI
             var popupField = new SignalingTypePopup("Signaling Type", 0);
             popupField.ChangeEvent += newType =>
             {
-                serializedObject.FindProperty("handlers");
+                var property = serializedObject.FindProperty("signalingSettings");
+                property.objectReferenceValue = Activator.CreateInstance(newType) as Object;
                 signalingSettingsUI.ChangeSignalingType(newType);
             };
             root.Add(popupField);

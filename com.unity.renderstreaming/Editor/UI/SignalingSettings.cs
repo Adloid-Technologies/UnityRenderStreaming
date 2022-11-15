@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
@@ -11,6 +13,16 @@ namespace Unity.RenderStreaming.Editor.UI
     {
         const string kTemplatePath = "Packages/com.unity.renderstreaming/Editor/UXML/SignalingSettings.uxml";
         const string kStylePath = "Packages/com.unity.renderstreaming/Editor/Styles/SignalingSettings.uss";
+
+
+        private static readonly IReadOnlyList<Type> relevantSignalingSettingTypes =
+            TypeCache.GetTypesDerivedFrom<Unity.RenderStreaming.SignalingSettings>().Where(t => t.IsVisible && t.IsClass).ToList();
+
+        private static FieldInfo[] baseSignalingSettingFieldInfo =
+            typeof(Unity.RenderStreaming.SignalingSettings).GetFields();
+
+        private static Dictionary<Type, FieldInfo[]> signalingSettingFieldInfosMap =
+            relevantSignalingSettingTypes.ToDictionary(x => x, x => x.GetFields());
 
         internal new class UxmlFactory : UxmlFactory<SignalingSettings>
         {
@@ -44,9 +56,18 @@ namespace Unity.RenderStreaming.Editor.UI
             iceServerCountField.RegisterCallback<ChangeEvent<int>>(ChangeSize);
         }
 
-        public void ChangeSignalingType(IEnumerable<string> newFieldNames)
+        public void ChangeSignalingType(Type newType)
         {
             extensionSettingContainer.Clear();
+
+            if (!signalingSettingFieldInfosMap.TryGetValue(newType, out var newTypeFields))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var newFieldNames = newTypeFields
+                .Where(x =>!baseSignalingSettingFieldInfo.Select(y => y.Name).Contains(x.Name))
+                .Select(x => x.Name);
             foreach (var fieldName in newFieldNames)
             {
                 extensionSettingContainer.Add(new TextField(fieldName));
