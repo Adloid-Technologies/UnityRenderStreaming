@@ -20,13 +20,13 @@ namespace Unity.RenderStreaming.Editor.UI
 
         internal static Type FindCustomInspectorTypeByType(Type inspectorType)
         {
-            foreach (var typ in customInspectorType)
+            foreach (var type in customInspectorType)
             {
-                foreach (CustomSignalingSettingsEditor custom in typ.GetCustomAttributes(typeof(CustomSignalingSettingsEditor),false))
+                foreach (CustomSignalingSettingsEditor custom in type.GetCustomAttributes(typeof(CustomSignalingSettingsEditor),false))
                 {
                     if (custom.inspectedType == inspectorType)
                     {
-                        return typ;
+                        return type;
                     }
                 }
             }
