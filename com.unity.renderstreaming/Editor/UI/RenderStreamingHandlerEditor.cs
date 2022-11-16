@@ -24,6 +24,7 @@ namespace Unity.RenderStreaming.Editor.UI
                     SerializedProperty prop = serializedObject.FindProperty("m_Script");
                     EditorGUILayout.PropertyField(prop, true, Array.Empty<GUILayoutOption>());
                 }
+
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("handlers"));
                 serializedObject.ApplyModifiedProperties();
             }));
