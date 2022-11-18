@@ -13,6 +13,7 @@ namespace Unity.RenderStreaming
         /// </summary>
 #pragma warning disable 0067
         public virtual event Action<InputDevice, InputDeviceChange> onDeviceChange;
+        public virtual event Action<Unity.RenderStreaming.InputSystem.InputRemoting.UserMessage> onUserMessage;
 #pragma warning restore 0067
     }
 }

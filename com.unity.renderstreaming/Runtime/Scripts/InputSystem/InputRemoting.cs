@@ -65,7 +65,10 @@ namespace Unity.RenderStreaming.InputSystem
             ChangeUsages,
             StartSending,
             StopSending,
+            UserEvent
         }
+
+        public event Action<InputRemoting.UserMessage> onUserMessage;
 
         /// <summary>
         /// A message exchanged between two InputRemoting instances.
@@ -199,6 +202,9 @@ namespace Unity.RenderStreaming.InputSystem
                     break;
                 case MessageType.StopSending:
                     StopSendingMsg.Process(this);
+                    break;
+                case MessageType.UserEvent:
+                    UserEventMsg.Process(this, msg);
                     break;
             }
         }
@@ -341,6 +347,12 @@ namespace Unity.RenderStreaming.InputSystem
             }
 
             Send(msg);
+        }
+
+        public void SendUserMessage(String message)
+        {
+            if (m_Subscribers == null) return;
+            Send(UserEventMsg.Create(message));
         }
 
         private void Send(Message msg)
@@ -798,6 +810,43 @@ namespace Unity.RenderStreaming.InputSystem
                 var device = Receiver.TryGetDeviceByRemoteId(remoteDeviceId, senderIndex);
                 if (device != null)
                     Receiver.m_LocalManager.RemoveDevice(device);
+            }
+        }
+
+        public class UserMessage
+        {
+            public UserMessage(int senderIndex, String message) {
+                m_senderIndex= senderIndex;
+                m_message= message;
+            }
+            private int m_senderIndex;
+            public int senderIndex
+            {
+                get { return m_senderIndex; }
+            }
+            private String m_message;
+            public String message
+            {
+                get { return m_message; }
+            }
+        }
+
+        private static class UserEventMsg
+        {
+            public static Message Create(String message)
+            {
+                return new Message
+                {
+                    type = MessageType.UserEvent,
+                    data = Encoding.UTF8.GetBytes(message)
+                };
+            }
+
+            public static void Process(InputRemoting Receiver, Message msg)
+            {
+                var senderIndex = Receiver.FindOrCreateSenderRecord(msg.participantId);
+                String message = Encoding.UTF8.GetString(msg.data);
+                Receiver.onUserMessage?.Invoke(new UserMessage(senderIndex, message));
             }
         }
 

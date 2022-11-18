@@ -94,7 +94,7 @@ async function setupRenderStreaming() {
 
 function onConnect() {
   const channel = renderstreaming.createDataChannel("input");
-  videoPlayer.setupInput(channel);
+  videoPlayer.setupSender(channel);
   multiplayChannel = renderstreaming.createDataChannel("multiplay");
   multiplayChannel.onopen = onOpenMultiplayChannel;
   showStatsMessage();

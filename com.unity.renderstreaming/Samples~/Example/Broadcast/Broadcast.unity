@@ -2692,6 +2692,7 @@ GameObject:
   - component: {fileID: 725451157}
   - component: {fileID: 725451153}
   - component: {fileID: 725451156}
+  - component: {fileID: 725451158}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: Untagged
@@ -2988,6 +2989,20 @@ MonoBehaviour:
   invertY: 0
   playerInput: {fileID: 725451153}
   uiController: {fileID: 1215389824}
+--- !u!114 &725451158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725451149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e6d9188eb6318c488077f3c88318a65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  local: 0
+  label: 
 --- !u!1 &736464805
 GameObject:
   m_ObjectHideFlags: 0
@@ -6129,6 +6144,7 @@ MonoBehaviour:
   - {fileID: 725451155}
   - {fileID: 725451156}
   - {fileID: 725451153}
+  - {fileID: 725451158}
 --- !u!4 &1623734775
 Transform:
   m_ObjectHideFlags: 0

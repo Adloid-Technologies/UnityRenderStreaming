@@ -88,8 +88,10 @@ async function setupRenderStreaming() {
 }
 
 function onConnect() {
-  const channel = renderstreaming.createDataChannel("input");
-  videoPlayer.setupInput(channel);
+  const sender = renderstreaming.createDataChannel("sender");
+  videoPlayer.setupSender(sender);
+  const receiver = renderstreaming.createDataChannel("receiver")
+  videoPlayer.setupReceiver(receiver);
   showStatsMessage();
 }
 
