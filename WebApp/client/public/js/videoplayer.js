@@ -201,7 +201,7 @@ export class VideoPlayer {
     this.inputRemoting.subscribe(new Observer(this.inputSenderChannel));
     
     setTimeout(() => {
-      this.inputRemoting.SendUserMessage("Ping")
+      this.inputRemoting.SendUserMessage("{'id': 'Ping'}")
     }, 2000);
   }
 

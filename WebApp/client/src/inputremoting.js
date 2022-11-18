@@ -252,7 +252,7 @@ export class Message {
     return new Message(
       dataView.getUint32(0, true),
       dataView.getUint32(4, true),
-      buffer.slice(12, 12 + dataView.getUint32(8, true) - 1)
+      buffer.slice(12, 12 + dataView.getUint32(8, true))
       );
   }
 

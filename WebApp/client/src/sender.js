@@ -215,9 +215,19 @@ export class Observer {
    * @param {Message} message 
    */
   onNext(message) {
-    if(this.channel == null || this.channel.readyState != 'open') {
+    if(this.channel == null) {
       return;
     }
-    this.channel.send(message.buffer);
+    if(this.channel.readyState == 'connecting'){
+      setTimeout(() => {
+        this.onNext(message)
+      }, 100);
+    }
+    else if (this.channel.readyState != 'open'){
+      return;
+    }
+    else{
+      this.channel.send(message.buffer);
+    }
   }
 }
