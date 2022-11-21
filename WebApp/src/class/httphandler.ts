@@ -63,7 +63,7 @@ function checkSessionId(req: Request, res: Response, next): void {
     next();
     return;
   }
-  const id: string = req.header('session-id');
+  const id: string = req.header('session-id') ?? req.query.sessionid as string;
   if (!clients.has(id)) {
     res.sendStatus(404);
     return;
@@ -210,14 +210,14 @@ function _getCandidate(sessionId: string, fromTime: number): [string, Candidate]
 function getAnswer(req: Request, res: Response): void {
   // get `fromtime` parameter from request query
   const fromTime: number = req.query.fromtime ? Number(req.query.fromtime) : 0;
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const answers: [string, Answer][] = _getAnswer(sessionId, fromTime);
   res.json({ answers: answers.map((v) => ({ connectionId: v[0], sdp: v[1].sdp, type: "answer", datetime: v[1].datetime })) });
 }
 
 function getConnection(req: Request, res: Response): void {
   // get `fromtime` parameter from request query
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const connections = _getConnection(sessionId);
   res.json({ connections: connections.map((v) => ({ connectionId: v, type: "connect", datetime: Date.now() })) });
 }
@@ -225,7 +225,7 @@ function getConnection(req: Request, res: Response): void {
 function getOffer(req: Request, res: Response): void {
   // get `fromtime` parameter from request query
   const fromTime: number = req.query.fromtime ? Number(req.query.fromtime) : 0;
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const offers = _getOffer(sessionId, fromTime);
   res.json({ offers: offers.map((v) => ({ connectionId: v[0], sdp: v[1].sdp, polite: v[1].polite, type: "offer", datetime: v[1].datetime })) });
 }
@@ -233,14 +233,14 @@ function getOffer(req: Request, res: Response): void {
 function getCandidate(req: Request, res: Response): void {
   // get `fromtime` parameter from request query
   const fromTime: number = req.query.fromtime ? Number(req.query.fromtime) : 0;
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const candidates = _getCandidate(sessionId, fromTime);
   res.json({ candidates: candidates.map((v) => ({ connectionId: v[0], candidate: v[1].candidate, sdpMLineIndex: v[1].sdpMLineIndex, sdpMid: v[1].sdpMid, type: "candidate", datetime: v[1].datetime })) });
 }
 
 function getAll(req: Request, res: Response): void {
   const fromTime: number = req.query.fromtime ? Number(req.query.fromtime) : 0;
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const connections = _getConnection(sessionId);
   const offers = _getOffer(sessionId, fromTime);
   const answers: [string, Answer][] = _getAnswer(sessionId, fromTime);
@@ -256,6 +256,7 @@ function getAll(req: Request, res: Response): void {
   array = array.concat(disconnections.map((v) => ({ connectionId: v.id, type: "disconnect", datetime: v.datetime })));
 
   array.sort((a, b) => a.datetime - b.datetime);
+  res.setHeader('Access-Control-Expose-Headers', 'Date')
   res.json({ messages: array });
 }
 
@@ -273,13 +274,13 @@ function createSession(req: string | Request, res: Response): void {
 }
 
 function deleteSession(req: Request, res: Response): void {
-  const id: string = req.header('session-id');
+  const id: string = req.header('session-id') ?? req.query.sessionid as string;
   _deleteSession(id);
   res.sendStatus(200);
 }
 
 function createConnection(req: Request, res: Response): void {
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const { connectionId } = req.body;
   if (connectionId == null) {
     res.status(400).send({ error: new Error(`connectionId is required`) });
@@ -312,7 +313,7 @@ function createConnection(req: Request, res: Response): void {
 }
 
 function deleteConnection(req: Request, res: Response): void {
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const { connectionId } = req.body;
 
   _deleteConnection(sessionId, connectionId);
@@ -321,7 +322,7 @@ function deleteConnection(req: Request, res: Response): void {
 }
 
 function postOffer(req: Request, res: Response): void {
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const { connectionId } = req.body;
   let keySessionId = null;
   let polite = false;
@@ -349,7 +350,7 @@ function postOffer(req: Request, res: Response): void {
 }
 
 function postAnswer(req: Request, res: Response): void {
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const { connectionId } = req.body;
   const connectionIds = getOrCreateConnectionIds(sessionId);
   connectionIds.add(connectionId);
@@ -389,7 +390,7 @@ function postAnswer(req: Request, res: Response): void {
 }
 
 function postCandidate(req: Request, res: Response): void {
-  const sessionId: string = req.header('session-id');
+  const sessionId: string = req.header('session-id') ?? req.query.sessionid as string;
   const { connectionId } = req.body;
 
   const map = candidates.get(sessionId);

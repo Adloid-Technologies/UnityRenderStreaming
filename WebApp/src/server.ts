@@ -6,6 +6,7 @@ import signaling from './signaling';
 import { log, LogLevel } from './log';
 import Options from './class/options';
 import { reset as resetHandler }from './class/httphandler';
+var cors = require('cors')
 
 export const createServer = (config: Options): express.Application => {
   const app: express.Application = express();
@@ -14,6 +15,7 @@ export const createServer = (config: Options): express.Application => {
   if (config.logging != "none") {
     app.use(morgan(config.logging));
   }
+  app.use(cors())
   // const signal = require('./signaling');
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());

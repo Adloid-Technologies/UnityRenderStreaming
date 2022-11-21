@@ -10,7 +10,7 @@ export class Signaling extends EventTarget {
 
   headers() {
     if (this.sessionId !== undefined) {
-      return { 'Content-Type': 'application/json', 'Session-Id': this.sessionId };
+      return { 'Content-Type': 'application/json'/*, 'Session-Id': this.sessionId*/ };
     }
     else {
       return { 'Content-Type': 'application/json' };
@@ -27,6 +27,7 @@ export class Signaling extends EventTarget {
       ret += '/' + method;
     if(parameter)
       ret += '?' + parameter;
+    ret += this.sessionId ? ((parameter ? "&" : "?") + `sessionid=${this.sessionId}`) : "";
     return ret;
   }
 
