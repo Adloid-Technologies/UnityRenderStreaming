@@ -1,5 +1,6 @@
 import { Observer, Sender } from "../module/sender.js";
 import { InputRemoting } from "../module/inputremoting.js";
+import { Receiver } from "../../module/receiver.js";
 
 export class VideoPlayer {
   constructor() {
@@ -169,9 +170,15 @@ export class VideoPlayer {
     if (this.inputRemoting) {
       this.inputRemoting.stopSending();
     }
+    if (this.receiverInputRemoting) {
+      this.receiverInputRemoting.stopSending();
+    }
     this.inputRemoting = null;
+    this.receiverInputRemoting = null;
     this.sender = null;
+    this.receiver = null;
     this.inputSenderChannel = null;
+    this.inputReceiverChannel = null;
 
     while (this.playerElement.firstChild) {
       this.playerElement.removeChild(this.playerElement.firstChild);
@@ -181,24 +188,12 @@ export class VideoPlayer {
     this.lockMouseCheck = null;
   }
 
-  _isTouchDevice() {
-    return (('ontouchstart' in window) ||
-      (navigator.maxTouchPoints > 0) ||
-      (navigator.msMaxTouchPoints > 0));
-  }
-
   /**
    * setup datachannel for player input (muouse/keyboard/touch/gamepad)
    * @param {RTCDataChannel} channel 
    */
-  setupInput(channel) {
+  setupSender(channel) {
     this.sender = new Sender(this.videoElement);
-    this.sender.addMouse();
-    this.sender.addKeyboard();
-    if (this._isTouchDevice()) {
-      this.sender.addTouchscreen();
-    }
-    this.sender.addGamepad();
     this.inputRemoting = new InputRemoting(this.sender);
 
     this.inputSenderChannel = channel;
@@ -206,8 +201,26 @@ export class VideoPlayer {
     this.inputRemoting.subscribe(new Observer(this.inputSenderChannel));
   }
 
+  /**
+   * setup datachannel for player input (muouse/keyboard/touch/gamepad)
+   * @param {RTCDataChannel} channel 
+   */
+  setupReceiver(channel) {
+    this.receiver = new Receiver(channel);
+    this.receiverInputRemoting = new InputRemoting(this.receiver);
+    
+    this.inputReceiverChannel = channel;
+    this.inputReceiverChannel.onopen = this._onOpenInputReceiverChannel.bind(this);
+    this.receiverInputRemoting.subscribe(this.receiver);
+   }
+
   async _onOpenInputSenderChannel() {
     await new Promise(resolve => setTimeout(resolve, 100));
     this.inputRemoting.startSending();
+  }
+
+  async _onOpenInputReceiverChannel(){
+    await new Promise(resolve => setTimeout(resolve, 100));
+    this.receiverInputRemoting.startSending();
   }
 }

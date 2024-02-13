@@ -12,7 +12,7 @@ export class LocalInputManager {
   }
 
   /**
-   * event type 'event', 'changedeviceusage'
+   * event type 'event', 'changedeviceusage', 'usermessage'
    * @return {Event}
    */
   get onEvent() {
@@ -70,6 +70,16 @@ export class InputRemoting {
     this._sending = false;
   }
 
+  _userMessageCallback;
+  setUserMessageCallback(callback){
+    this._userMessageCallback = callback;
+  }
+  onUserMessage(message){
+    if(this._userMessageCallback){
+      this._userMessageCallback(message);
+    }
+  }
+
   startSending() {
     if(this._sending) {
       return;
@@ -83,10 +93,18 @@ export class InputRemoting {
     const onDeviceChange = e => {
       this._sendDeviceChange(e.detail.device, e.detail.change);
     };
+    const onGameMessage = e => {
+      switch(e.detail.message.type){
+        case MessageType.UserEvent:
+          UserEventMsg.process(this, e.detail.message);
+          break;
+      }
+    };
 
     this._localManager.setStartTime(Date.now()/1000);
     this._localManager.onEvent.addEventListener("event", onEvent);
     this._localManager.onEvent.addEventListener("changedeviceusage", onDeviceChange);
+    this._localManager.onEvent.addEventListener("gamemessage", onGameMessage);
     this._sendInitialMessages();
   }
 
@@ -160,6 +178,20 @@ export class InputRemoting {
     }
     this._send(msg);
   }  
+  
+  /**
+  * 
+  * @param {string} message 
+  */
+  SendUserMessage(message){
+    this._sendUserMessage(message);
+  }
+
+  _sendUserMessage(message){
+    if(this._subscribers){
+      this._send(UserEventMsg.create(message));
+    }
+  }
 
   _send(message) {
     for(let subscriber of this._subscribers) {
@@ -179,6 +211,7 @@ export const MessageType = {
   ChangeUsages: 7,
   StartSending: 8,
   StopSending: 9,
+  UserEvent: 10
 };
 
 export class Message {
@@ -207,6 +240,20 @@ export class Message {
     this.type = type;
     this.length = data.byteLength;
     this.data = data;
+  }
+
+  /**
+   * 
+   * @param {ArrayBuffer} buffer 
+   * @returns {Message}
+   */
+  static create(buffer){
+    let dataView = new DataView(buffer);
+    return new Message(
+      dataView.getUint32(0, true),
+      dataView.getUint32(4, true),
+      buffer.slice(12, 12 + dataView.getUint32(8, true))
+    );
   }
 
   /**
@@ -295,5 +342,38 @@ export class ChangeUsageMsg {
   static create(device) {
     // todo:
     throw new Error(`ChangeUsageMsg class is not implemented. device=${device}`);
+  }
+}
+
+export class UserMessage{
+  constructor(senderIndex, message){
+    this.m_senderIndex = senderIndex;
+    this.m_message = message;
+  }
+  get senderIndex(){
+    return this.m_senderIndex;
+  }
+  get message(){
+    return this.m_message;
+  }
+}
+
+export class UserEventMsg{
+  /**
+   * 
+   * @param {string} message 
+   * @returns {Message}
+   */
+  static create(message){
+    return new Message(0, MessageType.UserEvent, new TextEncoder().encode(message).buffer);
+  }
+  /**
+   *    
+   * @param {InputRemoting} inputRemoting 
+   * @param {Message} msg 
+   */
+  static process(inputRemoting, msg){
+    let message = new TextDecoder("utf-8").decode(msg.data);
+    inputRemoting.onUserMessage(message);
   }
 }

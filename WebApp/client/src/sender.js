@@ -26,6 +26,22 @@ export class Sender extends LocalInputManager {
     this._elem.addEventListener('resize', this._onResizeEvent.bind(this), false);
     const observer = new ResizeObserver(this._onResizeEvent.bind(this));
     observer.observe(this._elem);
+    this._setupInputs();
+  }
+
+  _setupInputs(){
+    this.addMouse();
+    this.addKeyboard();
+    if (this._isTouchDevice()) {
+      this.addTouchscreen();
+    }
+    this.addGamepad();
+  }
+
+  _isTouchDevice() {
+    return (('ontouchstart' in window) ||
+      (navigator.maxTouchPoints > 0) ||
+      (navigator.msMaxTouchPoints > 0));
   }
 
   addMouse() {
@@ -200,9 +216,19 @@ export class Observer {
    * @param {Message} message
    */
   onNext(message) {
-    if(this.channel == null || this.channel.readyState != 'open') {
+    if(this.channel == null) {
       return;
     }
-    this.channel.send(message.buffer);
+    if(this.channel.readyState == 'connecting'){
+      setTimeout(() => {
+        this.onNext(message);
+      }, 100);
+    }
+    else if (this.channel.readyState != 'open'){
+      return;
+    }
+    else{
+      this.channel.send(message.buffer);
+    }
   }
 }
