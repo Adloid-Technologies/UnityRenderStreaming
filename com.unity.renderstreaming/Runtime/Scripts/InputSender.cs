@@ -63,6 +63,14 @@ namespace Unity.RenderStreaming
         {
             senderInput.StopSending();
         }
+        public void SendUserMessage(string message)
+        {
+            if(senderInput == null) {
+                //throw new InvalidOperationException("Cannot send message before opening the channel");
+                return;
+            }
+            senderInput.SendUserMessage(message);
+        }
 
         protected virtual void OnDestroy()
         {

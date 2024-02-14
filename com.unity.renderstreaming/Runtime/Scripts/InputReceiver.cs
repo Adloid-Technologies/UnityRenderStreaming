@@ -27,7 +27,8 @@ namespace Unity.RenderStreaming
         ///
         /// </summary>
         public override event Action<InputDevice, InputDeviceChange> onDeviceChange;
-
+        public override event Action<InputRemoting.UserMessage> onUserMessage;
+        
         /// <summary>
         ///
         /// </summary>
@@ -250,6 +251,7 @@ namespace Unity.RenderStreaming
                 receiver = new Receiver(channel);
                 receiver.onDeviceChange += onDeviceChange;
                 receiverInput = new InputRemoting(receiver);
+                receiverInput.OnUserMessage+= onUserMessage;
                 subscriberDisposer = receiverInput.Subscribe(receiverInput);
                 receiverInput.StartSending();
             }
